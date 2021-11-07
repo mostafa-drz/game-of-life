@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Modal from "react-modal";
 import { VictoryChart, VictoryLine } from "victory";
+import { CSVLink } from "react-csv";
 Modal.setAppElement("#root");
 
 function Numbers({
@@ -45,7 +46,6 @@ function Numbers({
             </tr>
           </tbody>
         </table>
-
         <VictoryChart height={400} width={400}>
           <VictoryLine
             data={generationPopulation}
@@ -53,6 +53,9 @@ function Numbers({
             y="population"
           />
         </VictoryChart>
+        <CSVLink data={generationPopulation} style={{ padding: ".5rem" }}>
+          Download data in csv
+        </CSVLink>
         <button onClick={() => setIsOpen(false)}>Close</button>
       </Modal>
     </div>
