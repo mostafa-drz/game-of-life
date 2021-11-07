@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+.input {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.input label {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}

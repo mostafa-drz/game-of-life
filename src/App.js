@@ -1,22 +1,31 @@
 import "./App.css";
 import { useEffect, useState, useRef, useCallback } from "react";
+import Setting from "./Setting";
 
-const CELL_WIDTH = 30;
-const RNADOM_SEED = 10000000000;
-const INTERVAL = 1000;
-
+function getSettingsFromQueryParams() {
+  const defaultSettings = {
+    time: 200,
+    cellWidth: 10,
+    initialLivePercent: 10,
+  };
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const params = Object.fromEntries(urlSearchParams.entries());
+  const newSettings = { ...defaultSettings, ...params };
+  return newSettings;
+}
 function App() {
   const [numberOfRows, setNumberOfRows] = useState(0);
   const [numberOfColumns, setNumberOfColumns] = useState(0);
   const [cells, setCells] = useState([]);
   const interval = useRef();
+  const [setting] = useState(() => getSettingsFromQueryParams());
 
   useEffect(() => {
-    const rows = Math.round(window.innerHeight / CELL_WIDTH);
-    const columns = Math.round(window.innerWidth / CELL_WIDTH);
+    const rows = Math.round(window.innerHeight / setting.cellWidth);
+    const columns = Math.round(window.innerWidth / setting.cellWidth);
     setNumberOfRows(rows);
     setNumberOfColumns(columns);
-  }, []);
+  }, [setting.cellWidth]);
 
   useEffect(() => {
     const _cells = new Array(numberOfRows);
@@ -24,12 +33,16 @@ function App() {
     for (let i = 0; i < numberOfRows; i++) {
       _cells[i] = new Array(numberOfColumns).fill(0, 0);
       for (let j = 0; j < numberOfColumns; j++) {
-        _cells[i][j] = Math.random() * RNADOM_SEED > RNADOM_SEED / 10 ? 1 : 0;
+        _cells[i][j] =
+          Math.random() * numberOfRows * numberOfColumns <
+          (numberOfColumns * numberOfRows * setting.initialLivePercent) / 100
+            ? 1
+            : 0;
       }
     }
 
     setCells(_cells);
-  }, [numberOfRows, numberOfColumns]);
+  }, [numberOfRows, numberOfColumns, setting.initialLivePercent]);
 
   const nextGeneration = useCallback(() => {
     function getNorth(rowIndex, columnIndex) {
@@ -106,10 +119,6 @@ function App() {
     for (let i = 0; i < numberOfRows; i++) {
       for (let j = 0; j < numberOfColumns; j++) {
         const cellNeighbours = getNeighbours(i, j);
-
-        // console.group(`(${i},${j})`);
-        // console.log(cellNeighbours);
-        // console.groupEnd();
         const liveNeighbours = Object.values(cellNeighbours).filter(
           (n) => n === 1
         );
@@ -140,10 +149,21 @@ function App() {
   }, [cells, numberOfColumns, numberOfRows]);
 
   useEffect(() => {
-    interval.current = setInterval(nextGeneration, INTERVAL);
+    interval.current = setInterval(nextGeneration, setting.time);
 
     return () => clearInterval(interval.current);
-  }, [nextGeneration]);
+  }, [nextGeneration, setting.time]);
+
+  function handleSubmit(e) {
+    // const _time = e.target.elements.time.value;
+    // const _cellWidth = e.target.elements.cellWidth.value;
+    // const _initialLivePercent = e.target.elements.initialLivePercent.value;
+    // setSetting({
+    //   time: _time,
+    //   cellWidth: _cellWidth,
+    //   initialLivePercent: _initialLivePercent,
+    // });
+  }
   return (
     <div
       className="App"
@@ -152,13 +172,13 @@ function App() {
         gridTemplateColumns: `repeat(${numberOfColumns},1fr)`,
       }}
     >
+      <Setting {...setting} handleSubmit={handleSubmit} />
       {cells.map((rows, rowIndex) => {
         return rows.map((column, columnsIndex) => (
           <Cell
             key={`${rowIndex}-${columnsIndex}`}
             status={cells[rowIndex][columnsIndex]}
-            i={rowIndex}
-            j={columnsIndex}
+            cellWidth={setting.cellWidth}
           />
         ));
       })}
@@ -166,12 +186,12 @@ function App() {
   );
 }
 
-function Cell({ status }) {
+function Cell({ status, cellWidth }) {
   return (
     <div
       style={{
-        width: `${CELL_WIDTH}px`,
-        height: `${CELL_WIDTH}px`,
+        width: `${cellWidth}px`,
+        height: `${cellWidth}px`,
         border: "1px solid black",
         backgroundColor: `${status === 0 ? "#000" : "#fff"}`,
         display: "grid",
