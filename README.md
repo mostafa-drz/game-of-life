@@ -12,3 +12,7 @@ This game has 4 main rules which are:
 > 4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
 It was interesting to me, because I think these rules apply to many things in life! There are very interesting patterns that can happen in this game! I'll encourage you to read the Wikipedia about properties of some of these patterns.
+
+## Demo
+
+You can see a demo [here](https://mostafa-drz.github.io/game-of-life/)
