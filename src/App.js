@@ -1,6 +1,7 @@
 import "./App.css";
 import { useEffect, useState, useRef, useCallback } from "react";
 import Setting from "./Setting";
+import Numbers from "./Numbers";
 
 function getSettingsFromQueryParams() {
   const defaultSettings = {
@@ -19,6 +20,8 @@ function App() {
   const [cells, setCells] = useState([]);
   const interval = useRef();
   const [setting] = useState(() => getSettingsFromQueryParams());
+  const [population, setPopulation] = useState(0);
+  const [generation, setGeneration] = useState(0);
 
   useEffect(() => {
     const rows = Math.round(window.innerHeight / setting.cellWidth);
@@ -29,7 +32,7 @@ function App() {
 
   useEffect(() => {
     const _cells = new Array(numberOfRows);
-
+    let _population = 0;
     for (let i = 0; i < numberOfRows; i++) {
       _cells[i] = new Array(numberOfColumns).fill(0, 0);
       for (let j = 0; j < numberOfColumns; j++) {
@@ -38,10 +41,14 @@ function App() {
           (numberOfColumns * numberOfRows * setting.initialLivePercent) / 100
             ? 1
             : 0;
+        if (_cells[i][j] === 1) {
+          _population++;
+        }
       }
     }
 
     setCells(_cells);
+    setPopulation(_population);
   }, [numberOfRows, numberOfColumns, setting.initialLivePercent]);
 
   const nextGeneration = useCallback(() => {
@@ -116,6 +123,7 @@ function App() {
     }
 
     let newState = cells;
+    let _population = population;
     for (let i = 0; i < numberOfRows; i++) {
       for (let j = 0; j < numberOfColumns; j++) {
         const cellNeighbours = getNeighbours(i, j);
@@ -127,6 +135,7 @@ function App() {
         if (current === 1 && liveNeighbours.length < 2) {
           //underpopulation
           newState[i][j] = 0;
+          _population--;
         } else if (
           current === 1 &&
           (liveNeighbours.length === 2 || liveNeighbours.length === 3)
@@ -137,16 +146,20 @@ function App() {
           //overpopulation
 
           newState[i][j] = 0;
+          _population--;
         } else if (current === 0 && liveNeighbours.length === 3) {
           //reproduction
 
           newState[i][j] = 1;
+          _population++;
         }
       }
     }
 
     setCells([...newState]);
-  }, [cells, numberOfColumns, numberOfRows]);
+    setPopulation(_population);
+    setGeneration(generation + 1);
+  }, [cells, numberOfColumns, numberOfRows, population, generation]);
 
   useEffect(() => {
     interval.current = setInterval(nextGeneration, setting.time);
@@ -172,6 +185,7 @@ function App() {
           />
         ));
       })}
+      <Numbers population={population} generation={generation} />
     </div>
   );
 }
