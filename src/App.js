@@ -23,6 +23,7 @@ function App() {
   const [population, setPopulation] = useState(0);
   const [generation, setGeneration] = useState(0);
   const [generationPopulation, setGenerationPopulation] = useState([]);
+  const [populationChangePercent, setPopulationChangePercent] = useState(0);
 
   useEffect(() => {
     const rows = Math.round(window.innerHeight / setting.cellWidth);
@@ -162,6 +163,9 @@ function App() {
       ...generationPopulation,
       { generation, population },
     ]);
+    setPopulationChangePercent(
+      Math.round(((_population - population) / population) * 100)
+    );
     setPopulation(_population);
     setGeneration(generation + 1);
   }, [
@@ -201,6 +205,7 @@ function App() {
         population={population}
         generation={generation}
         generationPopulation={generationPopulation}
+        populationChangePercent={populationChangePercent}
       />
     </div>
   );

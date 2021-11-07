@@ -3,7 +3,12 @@ import Modal from "react-modal";
 import { VictoryChart, VictoryLine } from "victory";
 Modal.setAppElement("#root");
 
-function Numbers({ generation, population, generationPopulation }) {
+function Numbers({
+  generation,
+  population,
+  generationPopulation,
+  populationChangePercent,
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -15,21 +20,40 @@ function Numbers({ generation, population, generationPopulation }) {
         isOpen={isOpen}
         shouldCloseOnOverlayClick={true}
         onRequestClose={() => setIsOpen(false)}
-        style={{ content: { width: "max-content", height: "max-content" } }}
+        style={{
+          content: { width: "max-content", height: "max-content" },
+          overlay: { backgroundColor: "transparent" },
+        }}
       >
-        <label>Population: {population}</label>
-        <label>generation: {generation}</label>
-        <VictoryChart
-          height={400}
-          width={400}
-          domainPadding={{ x: 50, y: [0, 20] }}
-        >
+        <table>
+          <thead>
+            <tr>
+              <th>Generation</th>
+              <th>Population</th>
+              <th>Change</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>{generation}</th>
+              <th>{population}</th>
+              <th
+                style={{ color: populationChangePercent > 0 ? "green" : "red" }}
+              >
+                {populationChangePercent}
+              </th>
+            </tr>
+          </tbody>
+        </table>
+
+        <VictoryChart height={400} width={400}>
           <VictoryLine
             data={generationPopulation}
             x="generation"
             y="population"
           />
         </VictoryChart>
+        <button onClick={() => setIsOpen(false)}>Close</button>
       </Modal>
     </div>
   );
