@@ -154,16 +154,6 @@ function App() {
     return () => clearInterval(interval.current);
   }, [nextGeneration, setting.time]);
 
-  function handleSubmit(e) {
-    // const _time = e.target.elements.time.value;
-    // const _cellWidth = e.target.elements.cellWidth.value;
-    // const _initialLivePercent = e.target.elements.initialLivePercent.value;
-    // setSetting({
-    //   time: _time,
-    //   cellWidth: _cellWidth,
-    //   initialLivePercent: _initialLivePercent,
-    // });
-  }
   return (
     <div
       className="App"
@@ -172,7 +162,7 @@ function App() {
         gridTemplateColumns: `repeat(${numberOfColumns},1fr)`,
       }}
     >
-      <Setting {...setting} handleSubmit={handleSubmit} />
+      <Setting {...setting} />
       {cells.map((rows, rowIndex) => {
         return rows.map((column, columnsIndex) => (
           <Cell
