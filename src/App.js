@@ -22,6 +22,7 @@ function App() {
   const [setting] = useState(() => getSettingsFromQueryParams());
   const [population, setPopulation] = useState(0);
   const [generation, setGeneration] = useState(0);
+  const [generationPopulation, setGenerationPopulation] = useState([]);
 
   useEffect(() => {
     const rows = Math.round(window.innerHeight / setting.cellWidth);
@@ -157,9 +158,20 @@ function App() {
     }
 
     setCells([...newState]);
+    setGenerationPopulation([
+      ...generationPopulation,
+      { generation, population },
+    ]);
     setPopulation(_population);
     setGeneration(generation + 1);
-  }, [cells, numberOfColumns, numberOfRows, population, generation]);
+  }, [
+    cells,
+    numberOfColumns,
+    numberOfRows,
+    population,
+    generation,
+    generationPopulation,
+  ]);
 
   useEffect(() => {
     interval.current = setInterval(nextGeneration, setting.time);
@@ -185,7 +197,11 @@ function App() {
           />
         ));
       })}
-      <Numbers population={population} generation={generation} />
+      <Numbers
+        population={population}
+        generation={generation}
+        generationPopulation={generationPopulation}
+      />
     </div>
   );
 }
