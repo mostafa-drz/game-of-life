@@ -158,14 +158,15 @@ function App() {
       }
     }
 
+    const _populationChangePercent = Math.round(
+      ((_population - population) / population) * 100
+    );
     setCells([...newState]);
     setGenerationPopulation([
       ...generationPopulation,
-      { generation, population },
+      { generation, population, change: _populationChangePercent },
     ]);
-    setPopulationChangePercent(
-      Math.round(((_population - population) / population) * 100)
-    );
+    setPopulationChangePercent(_populationChangePercent);
     setPopulation(_population);
     setGeneration(generation + 1);
   }, [
