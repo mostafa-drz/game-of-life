@@ -16,3 +16,25 @@ It was interesting to me, because I think these rules apply to many things in li
 ## Demo
 
 You can see a demo [here](https://mostafa-drz.github.io/game-of-life/)
+
+## How to run on local?
+
+1. Clone the repository
+
+```
+git clone https://github.com/mostafa-drz/game-of-life.git
+```
+
+2. Install dependencies
+
+```
+yarn install
+```
+
+3. Run the app
+
+```
+yarn start
+```
+
+It should open a new tab on `http://localhost:3000`
